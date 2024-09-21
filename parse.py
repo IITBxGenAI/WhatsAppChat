@@ -7,9 +7,9 @@ def parse_chat_history(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         content = file.read()
     
-    # Regular expression to match the date, time, sender, and message
-    pattern = r'(\d{1,2}/\d{1,2}/\d{2,4}),\s(\d{1,2}:\d{2})\s-\s([^:]+):\s(.+)'
-    matches = re.findall(pattern, content, re.MULTILINE)
+    # Updated regular expression to match the date, time, sender, and capture multi-line messages
+    pattern = r'(\d{1,2}/\d{1,2}/\d{2,4}),\s(\d{1,2}:\d{2})\s-\s([^:]+):\s([\s\S]*?)(?=\n\d{1,2}/\d{1,2}/\d{2,4},\s\d{1,2}:\d{2}\s-\s|$)'
+    matches = re.findall(pattern, content)
     
     parsed_messages = []
     for match in matches:
@@ -51,7 +51,7 @@ def anonymize_senders(messages):
 def save_to_file(messages, output_file):
     with open(output_file, 'w', encoding='utf-8') as file:
         for msg in messages:
-            file.write(f"{msg['date'].strftime('%m/%d/%y, %H:%M')} - {msg['sender']}: {msg['message']}\n")
+            file.write(f"{msg['date'].strftime('%m/%d/%y, %H:%M')} - {msg['sender']}:\n{msg['message']}\n\n")
 
 def main():
     parser = argparse.ArgumentParser(description="Parse and filter WhatsApp chat history")
